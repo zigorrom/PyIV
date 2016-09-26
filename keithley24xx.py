@@ -89,7 +89,7 @@ class Keithley24XX:
     DEFAULT_RANGES = ['DEF','MIN','MAX','UP','DOWN']
     DEFAULT_RANGE,MIN_RANGE,MAX_RANGE,UP_RANGE,DOWN_RANGE = DEFAULT_RANGES
 
-    AUTO_RANGE_STATES = AUTO_RANGE_ON, AUTO_RANGE_OFF = ['ON','OFF']
+    SWITCH_STATES = STATE_ON, STATE_OFF = ['ON','OFF']
     
     ALL_VOLTAGE_RANGES = ['200E-3','2','20','100']
     VOLT_RANGE_200mV,VOLT_RANGE_2V,VOLT_RANGE_20V,VOLT_RANGE_100V = ALL_VOLTAGE_RANGES
@@ -112,7 +112,7 @@ class Keithley24XX:
 
     def SetAutoRange(self,func, state):
         if func in self.SOURCE_FUNCTIONS:
-            if state in self.AUTO_RANGE_STATES:
+            if state in self.SWITCH_STATES:
                 self.instrument.write("SOUR:{f}:RANG:AUTO {s}".format(f = func,s = state))
 
 ##
@@ -211,7 +211,10 @@ class Keithley24XX:
 ##
 ##  END SET DELAY (NOT USED FOR PULSE MODE)
 ##       
-
+##################################################################################
+##
+##  SET PULSE WIDTH (USED FOR PULSE MODE)
+##
 
     MIN_PULSE_WIDTH = 0.00015
     MAX_PULSE_WIDTH = 0.005
@@ -222,6 +225,15 @@ class Keithley24XX:
             seconds = self.MAX_PULSE_WIDTH
         self.instrument.write("SOUR:PULS:WIDT {0}".format(seconds))
 
+##
+##   END SET PULSE WIDTH (USED FOR PULSE MODE)
+##
+
+
+##################################################################################
+##
+##  SET PULSE WIDTH (USED FOR PULSE MODE)
+##
     MIN_DELAY = 0
     MAX_DELAY = 9999.99872
     def SetPulseDelay(self,delay):
@@ -230,6 +242,50 @@ class Keithley24XX:
         elif delay > self.MAX_DELAY:
             delay = self.MAX_DELAY
         self.instrument.write("SOUR:PULS:WIDT {0}".format(delay))
+
+##
+##  END SET PULSE WIDTH (USED FOR PULSE MODE)
+##
+
+
+
+### SENSE1 SUBSYSTEM
+##################################################################################
+##
+##  SET CONCURRENT MEASUREMENT
+##
+##  For the Model 2430 Pulse Mode, concurrent measurements are always disabled. 
+##  Sending this command results in error +831.
+        
+    def SetConcurrentMeasurement(self,state):
+        if state in self.SWITCH_STATES:
+            self.instrument.write("SENS:FUNC:CONC {0}".format(state))
+
+
+##
+##  END SET CONCURRENT MEASUREMENT
+##
+
+##################################################################################
+##
+##  ON/OFF FUNCTIONS
+##   
+    SENSE_FUNCTIONS = ['VOLT','CURR','RES']
+    VOLT_SENSE_FUNCTION, CURR_SENSE_FUNCTION, RES_SENSE_FUNCTION = SENSE_FUNCTIONS
+    def ON_Function(self, func_list):
+        if func_list is list:
+            if all(item in self.SENSE_FUNCTIONS for item in func_list):
+                self.instrument.write("FUNC:ON \"{0}\"".format("\",\"".join(func_List)))
+
+    def SwitchFunction(self, state, func_List):
+        if (func_list is list) and (state in self.SWITCH_STATES):
+            if all(item in self.SENSE_FUNCTIONS for item in func_list):
+                self.instrument.write("FUNC:ON \"{0}\"".format("\",\"".join(func_List)))
+            
+
+##
+##  END ON/OFF FUNCTIONS
+##   
 
 
 
