@@ -239,7 +239,7 @@ class Keithley24XX:
             delay = self.MIN_DELAY
         elif delay > self.MAX_DELAY:
             delay = self.MAX_DELAY
-        self.instrument.write("SOUR:PULS:WIDT {0}".format(delay))
+        self.instrument.write("SOUR:PULS:DEL {0}".format(delay))
 
 ##
 ##  END SET PULSE WIDTH (USED FOR PULSE MODE)
@@ -383,21 +383,25 @@ if __name__ == "__main__":
     k.SetVoltageSourceFunction()
 ##    k.SwitchAllFunctions(k.STATE_ON)
 ##    time.sleep(1)
-##    k.SetPulse()
-##    k.DisablePulseMeasurements()
-##    k.SetPulseWidth(0.005)
-##    k.SetTriggerCount(1)
-
+    k.SetPulse()
+    k.DisablePulseMeasurements()
+    print("pw")
+    k.SetPulseWidth(0.005)
+    print("pd")
+    k.SetPulseDelay(1)
+    print("pc")
+    k.SetTriggerCount(3)
+    print("a")
     time.sleep(1)
     k.SetVoltageSourceRange(k.MAX_RANGE)#VOLT_RANGE_100V)
     time.sleep(1)
     
     k.SetVoltageAmplitude(100)
-##    time.sleep(1)
-##    k.StartOutput()
-    k.OutputOn()
-    print(k.StartOutputAndRead())
+    time.sleep(1)
+    k.StartOutput()
+##    k.OutputOn()
+##    print(k.StartOutputAndRead())
     time.sleep(2)
     k.OutputOff()
-##    k.SetDC()
+    k.SetDC()
     time.sleep(1)
