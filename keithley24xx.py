@@ -286,12 +286,25 @@ class Keithley24XX:
     def OFF_Function(self, func_list):
         self.SwitchFunction(self.STATE_OFF,func_list)
 
+
+    def SwitchAllFunctions(self,state):
+        if state in self.SWITCH_STATES:
+            self.instrument.write("FUNC:{0}:ALL".format(state))
     
 ##
 ##  END ON/OFF FUNCTIONS
 ##   
 
+##################################################################################
+##
+##  ON/OFF FUNCTIONS
+##
 
+    
+
+##
+##  END ON/OFF FUNCTIONS
+##        
 
 
     
