@@ -272,17 +272,21 @@ class Keithley24XX:
 ##   
     SENSE_FUNCTIONS = ['VOLT','CURR','RES']
     VOLT_SENSE_FUNCTION, CURR_SENSE_FUNCTION, RES_SENSE_FUNCTION = SENSE_FUNCTIONS
-    def ON_Function(self, func_list):
-        if func_list is list:
-            if all(item in self.SENSE_FUNCTIONS for item in func_list):
-                self.instrument.write("FUNC:ON \"{0}\"".format("\",\"".join(func_List)))
 
     def SwitchFunction(self, state, func_List):
         if (func_list is list) and (state in self.SWITCH_STATES):
             if all(item in self.SENSE_FUNCTIONS for item in func_list):
-                self.instrument.write("FUNC:ON \"{0}\"".format("\",\"".join(func_List)))
+                self.instrument.write("FUNC:{0} \"{1}\"".format(state,"\",\"".join(func_List)))
             
 
+    
+    def ON_Function(self, func_list):
+        self.SwitchFunction(self.STATE_ON,func_list)
+
+    def OFF_Function(self, func_list):
+        self.SwitchFunction(self.STATE_OFF,func_list)
+
+    
 ##
 ##  END ON/OFF FUNCTIONS
 ##   
@@ -352,6 +356,9 @@ class Keithley24XX:
 
     def Reset(self):
         self.instrument.ask("*RST")
+
+
+
     
 
 if __name__ == "__main__":
