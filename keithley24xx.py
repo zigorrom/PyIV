@@ -151,12 +151,67 @@ class Keithley24XX:
 
 ##################################################################################
 ##
-##  SET SOURCING AMPLITUDE
+##  SET FIXED AMPLITUDE WHEN TRIGGERED
 ##
 
+    def SetFixedModeAmplitudeWhenTriggered(self,func, ampl):
+        if func in self.SOURCE_FUNCTIONS:
+            strFmt = "SOUR:{f}:TRIG {a}"
+            if ampl in self.DEFAULT_AMPLITUDES:
+                self.instrument.write(strFmt.format(f=func,a=ampl))
+            elif func == self.VOLT_SOURCE_FUNCTION:
+                if (ampl >= self.MIN_VOLT_AMPL_VALUE) and (ampl<=self.MAX_VOLT_AMPL_VALUE):
+                    self.instrument.write(strFmt.format(f=func,a=ampl))
+            elif func == self.CURR_SOURCE_FUNCTION:
+                if(ampl >= self.MIN_CURR_AMPL_VALUE) and (ampl<=self.MAX_CURR_AMPL_VALUE):
+                    self.instrument.write(strFmt.format(f=func,a=ampl))
+
+    def SetVoltageAmplitudeWhenTriggered(self,volt):
+        self.SetFixedModeAmplitudeWhenTriggered(self.VOLT_SOURCE_FUNCTION,volt)
+
+    def SetCurrentAmplitudeWhenTriggered(self,curr):
+        self.SetFixedModeAmplitudeWhenTriggered(self.CURR_SOURCE_FUNCTION,curr)
+
 ##
-##  END SET SOURCING AMPLITUDE
+##  END SET FIXED AMPLITUDE WHEN TRIGGERED
 ##       
+
+
+##################################################################################
+##
+##  SET FIXED AMPLITUDE WHEN TRIGGERED
+##
+
+    def SetVoltageSourceLimit(self,level):
+        strFmt = "SOUR:VOLT:PROT {l}"
+        if level in self.DEFAULT_AMPLITUDES:
+              self.instrument.write(strFmt.format(l=level))
+        elif (level <= MAX_VOLT_AMPL_VALUE)and (level>=MIN_VOLT_AMPL_VALUE):
+            self.instrument.write(strFmt.format(l=level))
+
+##
+##  END SET FIXED AMPLITUDE WHEN TRIGGERED
+##       
+##################################################################################
+##
+##  SET DELAY (NOT USED FOR PULSE MODE)
+##
+
+    DELAY_VALUES = [0,999.9999]
+    MIN_DELAY, MAX_DELAY = DELAY_VALUES
+    
+    def SetDelay(self,delay):
+        strFmt = "SOUR:DEL {d}"
+        if delay in self.DEFAULT_AMPLITUDES:
+            self.instrument.write(strFmt.format(d=delay))
+        elif (delay>=self.MIN_DELAY) and (delay<=self.MAX_DELAY):
+            self.instrument.write(strFmt.format(d=delay))
+        
+    
+##
+##  END SET DELAY (NOT USED FOR PULSE MODE)
+##       
+
 
     MIN_PULSE_WIDTH = 0.00015
     MAX_PULSE_WIDTH = 0.005
