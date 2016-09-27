@@ -15,6 +15,7 @@ class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
         
         self.update_buttons()
         self.load_settings()
+        self.show()
 
     def save_settings(self):
         """Save spectrum analyzer settings and window geometry"""
@@ -65,7 +66,7 @@ class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
 
         # Window geometry has to be restored only after show(), because initial
         # maximization doesn't work otherwise (at least not in some window managers on X11)
-        self.show()
+        
         if settings.value("window_geometry"):
             self.restoreGeometry(settings.value("window_geometry"))
 
@@ -73,9 +74,39 @@ class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
     def update_buttons(self):
         pass
 
+    @QtCore.pyqtSlot()
+    def on_StartButton_clicked(self):
+        print("start pressed")
+
+    @QtCore.pyqtSlot()
+    def on_StopButton_clicked(self):
+        print("stop pressed")
+
+    @QtCore.pyqtSlot()
+    def on_pulsButton_clicked(self):
+        print("pulse")
+
+    @QtCore.pyqtSlot(bool)
+    def on_pulsedVoltageCheckBox_toggled(self,checked):
+        print("pulse checked: {0}".format(checked))
+
+    @QtCore.pyqtSlot(float)
+    def on_gateIcutoff_valueChanged(self,value):
+        print("gate {0}".format(value))
+
+    @QtCore.pyqtSlot(float)
+    def on_dsVoltageSet_valueChanged(self,value):
+        print("ds changed")
+
+    @QtCore.pyqtSlot(float)
+    def on_gsVoltageSet_valueChanged(self,value):
+        print("gs changed")
+
+    
     def closeEvent(self, event):
         """Save settings when main window is closed"""
 ##        self.stop()
+        print("close event")
         self.save_settings()
 
     
