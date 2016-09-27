@@ -33,9 +33,9 @@ class Ui_TimetraceView(object):
         self.plotSplitter = QtGui.QSplitter(self.centralwidget)
         self.plotSplitter.setOrientation(QtCore.Qt.Vertical)
         self.plotSplitter.setObjectName(_fromUtf8("plotSplitter"))
-        self.drain_current_plot = QtGui.QGraphicsView(self.plotSplitter)
+        self.drain_current_plot = GraphicsLayoutWidget(self.plotSplitter)
         self.drain_current_plot.setObjectName(_fromUtf8("drain_current_plot"))
-        self.gate_current_plot = QtGui.QGraphicsView(self.plotSplitter)
+        self.gate_current_plot = GraphicsLayoutWidget(self.plotSplitter)
         self.gate_current_plot.setObjectName(_fromUtf8("gate_current_plot"))
         self.horizontalLayout.addWidget(self.plotSplitter)
         TimetraceView.setCentralWidget(self.centralwidget)
@@ -44,6 +44,10 @@ class Ui_TimetraceView(object):
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
+        self.menuWindow = QtGui.QMenu(self.menubar)
+        self.menuWindow.setObjectName(_fromUtf8("menuWindow"))
+        self.menuHelp = QtGui.QMenu(self.menubar)
+        self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
         TimetraceView.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(TimetraceView)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -206,10 +210,18 @@ class Ui_TimetraceView(object):
         self.actionWorkinFolder.setObjectName(_fromUtf8("actionWorkinFolder"))
         self.actionExit = QtGui.QAction(TimetraceView)
         self.actionExit.setObjectName(_fromUtf8("actionExit"))
+        self.actionRestore_windows = QtGui.QAction(TimetraceView)
+        self.actionRestore_windows.setObjectName(_fromUtf8("actionRestore_windows"))
+        self.actionAbout = QtGui.QAction(TimetraceView)
+        self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
         self.menuFile.addAction(self.actionWorkinFolder)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
+        self.menuWindow.addAction(self.actionRestore_windows)
+        self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuWindow.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(TimetraceView)
         QtCore.QMetaObject.connectSlotsByName(TimetraceView)
@@ -217,6 +229,8 @@ class Ui_TimetraceView(object):
     def retranslateUi(self, TimetraceView):
         TimetraceView.setWindowTitle(_translate("TimetraceView", "TMM (Timetrace Measurement Module)", None))
         self.menuFile.setTitle(_translate("TimetraceView", "File", None))
+        self.menuWindow.setTitle(_translate("TimetraceView", "Window", None))
+        self.menuHelp.setTitle(_translate("TimetraceView", "Help", None))
         self.voltagesDock.setWindowTitle(_translate("TimetraceView", "Voltages", None))
         self.groupBox.setTitle(_translate("TimetraceView", "Drain-Source Voltage", None))
         self.label.setText(_translate("TimetraceView", "DS_Voltage", None))
@@ -245,7 +259,10 @@ class Ui_TimetraceView(object):
         self.label_11.setText(_translate("TimetraceView", "Experimant name", None))
         self.actionWorkinFolder.setText(_translate("TimetraceView", "WorkinFolder", None))
         self.actionExit.setText(_translate("TimetraceView", "Exit", None))
+        self.actionRestore_windows.setText(_translate("TimetraceView", "Restore windows", None))
+        self.actionAbout.setText(_translate("TimetraceView", "About", None))
 
+from pyqtgraph import GraphicsLayoutWidget
 
 if __name__ == "__main__":
     import sys
