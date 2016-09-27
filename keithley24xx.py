@@ -97,18 +97,16 @@ class Keithley24XX:
     ALL_CURRENT_RANGES = ['10E-6','100E-6','1E-3','10E-3','100E-3','1']
     CURR_RANGE_10uA,CURR_RANGE_100uA,CURR_RANGE_1mA,CURR_RANGE_10mA,CURR_RANGE_100mA,CURR_RANGE_1A = ALL_CURRENT_RANGES
 
-    def SetSourceRange(self,func,range):
+    def SetSourceRange(self,func,rang):
         if func in self.SOURCE_FUNCTIONS:
-            if(range in self.DEFAULT_RANGES) or (range in self.ALL_VOLTAGE_RANGES) or (range in self.ALL_CURRENT_RANGES):
-                self.instrument.write("SOUR:{f}:RANG {r}".format(f=func,r=range))
+            if(rang in self.DEFAULT_RANGES) or (rang in self.ALL_VOLTAGE_RANGES) or (rang in self.ALL_CURRENT_RANGES):
+                self.instrument.write("SOUR:{f}:RANG {r}".format(f=func,r=rang))
 
-    def SetVoltageSourceRange(self,range):
-        if range in self.ALL_VOLTAGE_RANGES:
-            self.SetSourceRange(self.VOLT_SOURCE_FUNCTION,range)
+    def SetVoltageSourceRange(self,rang):
+        self.SetSourceRange(self.VOLT_SOURCE_FUNCTION,rang)
         
-    def SetCurrentSourceRange(self,range):
-        if range in self.ALL_CURRENT_RANGES:
-            self.SetSourceRange(self.CURR_SOURCE_FUNCTION,range)
+    def SetCurrentSourceRange(self,rang):
+        self.SetSourceRange(self.CURR_SOURCE_FUNCTION,rang)
 
     def SetAutoRange(self,func, state):
         if func in self.SOURCE_FUNCTIONS:
@@ -241,7 +239,7 @@ class Keithley24XX:
             delay = self.MIN_DELAY
         elif delay > self.MAX_DELAY:
             delay = self.MAX_DELAY
-        self.instrument.write("SOUR:PULS:WIDT {0}".format(delay))
+        self.instrument.write("SOUR:PULS:DEL {0}".format(delay))
 
 ##
 ##  END SET PULSE WIDTH (USED FOR PULSE MODE)
@@ -368,7 +366,7 @@ class Keithley24XX:
             return self.instrument.ask("*IDN?")
 
     def Reset(self):
-        self.instrument.ask("*RST")
+        self.instrument.write("*RST")
 
 
 
@@ -376,30 +374,32 @@ class Keithley24XX:
 
 if __name__ == "__main__":
     k = Keithley24XX('GPIB0::5::INSTR')
-##    k.Reset()
+    k.Reset()
+    time.sleep(1)
     print(k.IDN())
     
     k.SetCurrentSourceFunction()
     time.sleep(1)
     k.SetVoltageSourceFunction()
-    
-    time.sleep(1)
+##    k.SwitchAllFunctions(k.STATE_ON)
+##    time.sleep(1)
     k.SetPulse()
     k.DisablePulseMeasurements()
+    print("pw")
     k.SetPulseWidth(0.005)
-    k.SetTriggerCount(1)
-
+    print("pd")
+    k.SetPulseDelay(1)
+    print("pc")
+    k.SetTriggerCount(3)
+    print("a")
     time.sleep(1)
-    k.SetVoltageSourceRange(k.MAX_RANGE)
+    k.SetVoltageSourceRange(k.MAX_RANGE)#VOLT_RANGE_100V)
     time.sleep(1)
-##    k.SetAutoRange(k.VOLT_SOURCE_FUNCTION,k.AUTO_RANGE_ON)
-    print(k.AUTO_RANGE_ON)
-##    k.SetSourcingRange(k.VOLT_SOURCE_FUNCTION,k.VOLT_RANGE_200mV)
-##    k.SetVoltageAmplitude(100)
-    k.SetFixedModeAmplitude(k.VOLT_SOURCE_FUNCTION,10)
+    
+    k.SetVoltageAmplitude(100)
     time.sleep(1)
-##    k.StartOutput()
-    k.OutputOn()
+    k.StartOutput()
+##    k.OutputOn()
 ##    print(k.StartOutputAndRead())
     time.sleep(2)
     k.OutputOff()
