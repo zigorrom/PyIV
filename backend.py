@@ -12,7 +12,7 @@ class TimetraceMeasurement(QtCore.QThread):
         self.process = None
 
     def stop(self):
-        self.process_stop()
+##        self.process_stop()
         self.alive = False
         self.wait()
     
@@ -34,6 +34,7 @@ class TimetraceMeasurement(QtCore.QThread):
             if not self.alive:
                 break
             print("count {0}".format(counter))
+            counter = counter + 1
 
         self.process_stop()
         self.alive = False

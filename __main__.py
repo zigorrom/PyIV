@@ -145,9 +145,10 @@ class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
     
     def closeEvent(self, event):
         """Save settings when main window is closed"""
-##        self.stop()
-        print("close event")
+        self.stop()
         self.save_settings()
+        print("close event")
+
 
     
         
