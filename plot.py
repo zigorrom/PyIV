@@ -35,9 +35,9 @@ class TimetraceIVplotWidget:
         #for plot resizing
         self.p1 = None
         self.p2 = None
-        
+                
 
-        print("Attr names: {0},{1},{2}".format(self.x_axis,self.ly_axis,self.ry_axis))
+##        print("Attr names: {0},{1},{2}".format(self.x_axis,self.ly_axis,self.ry_axis))
         
         
         self.create_plot()
@@ -58,7 +58,8 @@ class TimetraceIVplotWidget:
         p2.setXLink(p1)
         p1.getAxis('right').setLabel("Voltage")
 
-        
+        p1.setYRange(0.1,0.2)
+        p2.setYRange(0.1,0.2)
 
         self.current_curve = p1.plot(pen=self.current_color)
         self.current_curve.setZValue(900)

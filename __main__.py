@@ -25,7 +25,7 @@ class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
         self.prev_timestamp = None
         
         self.setup_timetrace_measurement()
-        
+        self.counter = 0
         self.update_buttons()
         self.load_settings()
         self.show()
@@ -121,6 +121,9 @@ class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
         self.StopButton.setEnabled(self.timetrace_thread.alive)
 
     def update_data(self):
+        self.counter += 1
+        if self.counter>50:
+            self.on_StopButton_clicked()
         timestamp = time.time()
         sweep_time = timestamp - self.prev_timestamp
         self.prev_timestamp = timestamp
