@@ -4,17 +4,25 @@ from PyQt4 import QtCore, QtGui
 
 from plot import TimetraceIVplotWidget
 from backend import TimetraceMeasurement
-
+from data import TimetraceDataStorage
 from timetrace_view import Ui_TimetraceView
-
+# Allow CTRL+C and/or SIGTERM to kill us (PyQt blocks it otherwise)
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
 class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
     def __init__(self,parent=None):
         super().__init__(parent)
         self.setupUi(self)
 
-        self.DrainTimetracePlotWidget = TimetraceIVplotWidget(self.drain_current_plot)
-        self.GateTimetracePlotWidget = TimetraceIVplotWidget(self.gate_current_plot)
+        self.DrainTimetracePlotWidget = TimetraceIVplotWidget(self.drain_current_plot,ly_axis = "id",ry_axis = "vd")
+        self.GateTimetracePlotWidget = TimetraceIVplotWidget(self.gate_current_plot,ly_axis = "ig",ry_axis = "vg")
+
+        self.DrainTimetracePlotWidget.plot.setXLink(self.GateTimetracePlotWidget.plot)
+
+        self.data_storage = None
+        self.timetrace_thread= None
+        self.prev_timestamp = None
         
         self.setup_timetrace_measurement()
         
@@ -24,7 +32,16 @@ class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
 
 
     def setup_timetrace_measurement(self):
-        self.timetrace_thread = TimetraceMeasurement(None,None)
+        if self.timetrace_thread:
+            self.stop()
+        settings = QtCore.QSettings()
+        
+        self.data_storage = TimetraceDataStorage(max_history_size=settings.value("timetrace_history_size", 100, int))
+        self.data_storage.data_updated.connect(self.update_data)
+        self.data_storage.data_updated.connect(self.DrainTimetracePlotWidget.update_plot)
+        self.data_storage.data_updated.connect(self.GateTimetracePlotWidget.update_plot)
+                
+        self.timetrace_thread = TimetraceMeasurement(self.data_storage)
         self.timetrace_thread.TimetraceStarted.connect(self.update_buttons)
         self.timetrace_thread.TimetraceStopped.connect(self.update_buttons)
 
@@ -87,6 +104,7 @@ class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
         self.statusbar.showMessage(message,timeout)
 
     def start(self):
+        self.prev_timestamp = time.time()
         if not self.timetrace_thread.alive:
             self.timetrace_thread.start()
             self.show_status("started")
@@ -102,6 +120,17 @@ class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
 ##        self.singleShotButton.setEnabled(not self.rtl_power_thread.alive)
         self.StopButton.setEnabled(self.timetrace_thread.alive)
 
+    def update_data(self):
+        timestamp = time.time()
+        sweep_time = timestamp - self.prev_timestamp
+        self.prev_timestamp = timestamp
+        fps = 0
+        try:
+            fps= 1/sweep_time
+        except ZeroDivisionError:
+            pass
+        finally:
+            self.show_status("sweep time: {:10.5f}; FPS{:10.5f};".format(sweep_time,fps))
         
 
     @QtCore.pyqtSlot()
