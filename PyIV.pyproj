@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{016eb413-d452-487d-81d3-4c92acaacc54}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>backend.py</StartupFile>
+    <StartupFile>__main__.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
