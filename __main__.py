@@ -39,7 +39,7 @@ class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
         self.data_storage = TimetraceDataStorage(max_history_size=settings.value("timetrace_history_size", 100, int))
         self.data_storage.data_updated.connect(self.update_data)
         self.data_storage.data_updated.connect(self.DrainTimetracePlotWidget.update_plot)
-        self.data_storage.data_updated.connect(self.GateTimetracePlotWidget.update_plot)
+##        self.data_storage.data_updated.connect(self.GateTimetracePlotWidget.update_plot)
                 
         self.timetrace_thread = TimetraceMeasurement(self.data_storage)
         self.timetrace_thread.TimetraceStarted.connect(self.update_buttons)
@@ -180,6 +180,7 @@ class TimetraceMainWindow(QtGui.QMainWindow, Ui_TimetraceView):
         self.stop()
         self.save_settings()
         print("close event")
+        
 
 
     

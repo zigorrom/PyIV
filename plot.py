@@ -58,8 +58,8 @@ class TimetraceIVplotWidget:
         p2.setXLink(p1)
         p1.getAxis('right').setLabel("Voltage")
 
-        p1.setYRange(0.1,0.2)
-        p2.setYRange(0.1,0.2)
+##        p1.setYRange(0.1,0.2)
+##        p2.setYRange(0.1,0.2)
 
         self.current_curve = p1.plot(pen=self.current_color)
         self.current_curve.setZValue(900)
