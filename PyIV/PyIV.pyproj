@@ -23,7 +23,6 @@
   <ItemGroup>
     <Compile Include="communication_layer.py" />
     <Compile Include="IV_measurement.py" />
-    <Compile Include="IV_measurementWindow.pyw" />
     <Compile Include="iv_plot.py" />
     <Compile Include="keithley24xx.py" />
     <Compile Include="n_enum.py" />
