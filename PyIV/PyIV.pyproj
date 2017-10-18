@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0fe9177a-94ad-4821-92d3-9b55957e3412}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>communication_layer.py</StartupFile>
+    <StartupFile>IV_measurement.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
