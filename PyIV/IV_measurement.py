@@ -223,7 +223,7 @@ class IV_Experiment(QThread):
         assert isinstance(independent_device, Keithley24XX), "Wrong type for independent device"
         assert isinstance(dependent_device, Keithley24XX), "Wrong type for dependent device"
         NUMBER_OF_ELEMENTS_READ_FROM_DEVICE = 5
-        cols = "{0} voltage; {0} current; {0} timestamp; {1} voltage; {1} current; {1} timestamp".format(independent_variable_name.title(), dependent_variable_name.title()).split(';')
+        cols = "{0} voltage;{0} current;{0} timestamp;{1} voltage;{1} current;{1} timestamp".format(independent_variable_name.title(), dependent_variable_name.title()).split(';')
         filename_format = "{0}_{1}_{2}.dat"
         measurement_data_filename = os.path.join(self.working_folder,"MeasurmentData_{0}.dat".format(self.experiment_name))
         need_to_write_header = lambda: not os.path.isfile(measurement_data_filename)
