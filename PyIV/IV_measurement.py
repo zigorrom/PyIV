@@ -219,6 +219,11 @@ class IV_Experiment(QThread):
         device.PerformBeep()
         device.SwitchBeeperOff()
 
+    def __activate_minimal_sensing_range(self, device):
+       assert isinstance(device, Keithley24XX), "Wrong type for independent device"
+       device.SetSenseRange(Keithley24XX.MIN_RANGE)
+       device.SwitchCurrentAutoSenseRangeOn()
+
     def __perform_hardware_sweep(self, independent_device, independent_range, dependent_device, dependent_range, independent_variable_name, dependent_variable_name, visualize_independent_values):
         assert isinstance(independent_device, Keithley24XX), "Wrong type for independent device"
         assert isinstance(dependent_device, Keithley24XX), "Wrong type for dependent device"
@@ -249,6 +254,9 @@ class IV_Experiment(QThread):
             #update autozero values
             independent_device.ForceAutoZeroUpdate()
             dependent_device.ForceAutoZeroUpdate()
+
+            self.__activate_minimal_sensing_range(independent_device)
+            self.__activate_minimal_sensing_range(dependent_device)
 
             independent_device.OutputOn()
             dependent_device.OutputOn() 

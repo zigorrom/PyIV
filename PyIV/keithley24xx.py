@@ -397,9 +397,46 @@ class Keithley24XX(VisaInstrument):
 ##
 ##  END SWEEP FUNCTIONS
 ##        
+##################################################################################
+##
+##  SET SENSING RANGE
+##
+    #DEFAULT_RANGES = ['DEF','MIN','MAX','UP','DOWN']
+    #DEFAULT_RANGE,MIN_RANGE,MAX_RANGE,UP_RANGE,DOWN_RANGE = DEFAULT_RANGES
 
+    #STATE_ON, STATE_OFF = SWITCH_STATES = ['ON','OFF']
+    
+    #ALL_VOLTAGE_RANGES = ['200E-3','2','20','100']
+    #VOLT_RANGE_200mV,VOLT_RANGE_2V,VOLT_RANGE_20V,VOLT_RANGE_100V = ALL_VOLTAGE_RANGES
 
+    #ALL_CURRENT_RANGES = ['10E-6','100E-6','1E-3','10E-3','100E-3','1']
+    #CURR_RANGE_10uA,CURR_RANGE_100uA,CURR_RANGE_1mA,CURR_RANGE_10mA,CURR_RANGE_100mA,CURR_RANGE_1A = ALL_CURRENT_RANGES
 
+    def SetSenseRange(self,func,rang):
+        if func in self.SOURCE_SENSE_FUNCTIONS:
+            if(rang in self.DEFAULT_RANGES) or (rang in self.ALL_VOLTAGE_RANGES) or (rang in self.ALL_CURRENT_RANGES):
+                self.write("SENS:{f}:RANG {r}".format(f=func,r=rang))
+
+    def SetVoltageSourceRange(self,rang):
+        self.SetSenseRange(self.VOLT_SENSE_FUNCTION,rang)
+    
+    def SetCurrentSourceRange(self,rang):
+        self.SetSenseRange(self.CURR_SENSE_FUNCTION,rang)
+
+    def SetAutoSenseRange(self,func, state):
+        if func in self.SOURCE_SENSE_FUNCTIONS:
+            if state in self.SWITCH_STATES:
+                self.write("SENS:{f}:RANG:AUTO {s}".format(f = func,s = state))
+
+    def SwitchCurrentAutoSenseRangeOn(self):
+        self.SetAutoSenseRange(self.CURR_SENSE_FUNCTION, self.STATE_ON)
+
+    def SwitchCurrentAutoSenseRangeOff(self):
+        self.SetAutoSenseRange(self.CURR_SENSE_FUNCTION, self.STATE_OFF)
+
+##
+##  END SET SENSING RANGE
+##
 ##################################################################################
 ##
 ##  Triggering FUNCTIONS
