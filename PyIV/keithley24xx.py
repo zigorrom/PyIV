@@ -417,10 +417,10 @@ class Keithley24XX(VisaInstrument):
             if(rang in self.DEFAULT_RANGES) or (rang in self.ALL_VOLTAGE_RANGES) or (rang in self.ALL_CURRENT_RANGES):
                 self.write("SENS:{f}:RANG {r}".format(f=func,r=rang))
 
-    def SetVoltageSourceRange(self,rang):
+    def SetVoltageSenseRange(self,rang):
         self.SetSenseRange(self.VOLT_SENSE_FUNCTION,rang)
     
-    def SetCurrentSourceRange(self,rang):
+    def SetCurrentSenseRange(self,rang):
         self.SetSenseRange(self.CURR_SENSE_FUNCTION,rang)
 
     def SetAutoSenseRange(self,func, state):

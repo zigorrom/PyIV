@@ -221,7 +221,7 @@ class IV_Experiment(QThread):
 
     def __activate_minimal_sensing_range(self, device):
        assert isinstance(device, Keithley24XX), "Wrong type for independent device"
-       device.SetSenseRange(Keithley24XX.MIN_RANGE)
+       device.SetCurrentSenseRange(Keithley24XX.MIN_RANGE)
        device.SwitchCurrentAutoSenseRangeOn()
 
     def __perform_hardware_sweep(self, independent_device, independent_range, dependent_device, dependent_range, independent_variable_name, dependent_variable_name, visualize_independent_values):
