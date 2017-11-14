@@ -493,9 +493,17 @@ class MainView(mainViewBase, mainViewForm):
         #self.ui_gs_stop.valueChanged.connect(self.__ui_range_changed)
         #self.ui_gs_points.valueChanged.connect(self.__ui_range_changed)
         self.ui_measurement_type.currentIndexChanged.connect(self.__ui_measurement_type_changed)
-
-
         
+
+    def __initialize_control_buttons(self):
+        self.startButton.setEnabled(True)
+        self.stopButton.setEnabled(False)
+        
+    def __set_ui_experiment_started(self):
+        self.startButton.setEnabled(False)
+        self.stopButton.setEnabled(True)
+
+    
         #config = configparser.ConfigParser()
         #config.read(self.config_filename)
 
@@ -762,7 +770,7 @@ class MainView(mainViewBase, mainViewForm):
         self.ivPlotWidget.clear_curves()
         self.initialize_experiment()
         self.experiment.start()
-
+        self.__set_ui_experiment_started()
         #self.initialize_experiment()
         #self.experiment.start()
         
@@ -776,6 +784,7 @@ class MainView(mainViewBase, mainViewForm):
             self.experiment.terminate()
             self.experiment.wait()
             print("experiment stopped")
+            self.__initialize_control_buttons()
             
         #self.ivPlotWidget.clear_curves()
         #self.experiment.stop()
