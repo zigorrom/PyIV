@@ -851,8 +851,9 @@ class MainView(mainViewBase, mainViewForm):
       
 def ui_application():
     app = QtGui.QApplication(sys.argv)
-    app.setApplicationName("LegacyNoiseMeasurementSetup")
+    app.setApplicationName("PyIV")
     app.setStyle("cleanlooks")
+    app.setWindowIcon(QtGui.QIcon('pyiv.ico'))
     wnd = MainView()
     wnd.show()
     return app.exec_()
