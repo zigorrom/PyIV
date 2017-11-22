@@ -678,6 +678,7 @@ class MainView(mainViewBase, mainViewForm):
         self.progressBar.setRange(0,max_experiment_count)
         self.progressBar.setValue(0)
         self.progressBar.setVisible(True)
+        
 
     def _on_experiment_finished(self):
         self.show_message("experiment finished", 1000)
@@ -692,6 +693,7 @@ class MainView(mainViewBase, mainViewForm):
         retval = msg.exec_()
 
         self.progressBar.setVisible(False)
+        self.__initialize_control_buttons()
        
 
     def _on_measurement_started(self): #, max_experiment_count):
