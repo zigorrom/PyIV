@@ -27,6 +27,9 @@
     <Compile Include="keithley24xx.py" />
     <Compile Include="n_enum.py" />
     <Compile Include="range_handlers.py" />
+    <Compile Include="__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="configuration.ini" />
