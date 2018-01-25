@@ -23,7 +23,7 @@ MEASUREMENT_TYPES = ["Output", "Transfer"]
 OUTPUT_MEASUREMENT, TRANSFER_MEASUREMENT = MEASUREMENT_TYPES
 
 
-     
+  
 
 class IV_Experiment(QThread):
     measurementStarted = QtCore.pyqtSignal() # int - max amount of points in the sweep
@@ -361,9 +361,51 @@ class IV_Experiment(QThread):
 
     
     
+class QVoltageValidator(QtGui.QRegExpValidator):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        regex = QtCore.QRegExp("^-?(?:0|[1-9]\d*).?(\d*)\s*(?:[yzafpnumcdhkMGTPEZY])?[V]")   #"(\d+).?(\d*)\s*(m|cm|km)")
+        self.setRegExp(regex)   
+
+class SaveDataObject:
+    def __init__(self):
+        pass
+
+defaultSaveBase, defaultSaveForm = uic.loadUiType("UI_default_save.ui")
+class DefaultSaveWidget(defaultSaveBase, defaultSaveForm):
+    def __init__(self, parent = None):
+        super(defaultSaveBase, self).__init__(parent)
+        self.setupUi()
+
+    def setupUi(self):
+        super(DefaultSaveWidget, self).setupUi(self)
 
 
-mainViewBase, mainViewForm = uic.loadUiType("UI_IV_Measurement.ui")
+advancedSaveBase, advancedSaveForm = uic.loadUiType("UI_advanced_save.ui")
+class AdvancedSaveWidget(advancedSaveBase, advancedSaveForm):
+    def __init__(self, parent = None):
+        super(advancedSaveBase, self).__init__(parent)
+        self.setupUi()
+
+    def setupUi(self):
+        super(AdvancedSaveWidget, self).setupUi(self)
+
+#def setupFolderBrowseButton(parent, ):
+#        self.popMenu = QtGui.QMenu(parent)
+#        self.selected_folder_context_menu_item = QtGui.QAction(self)
+#        self.selected_folder_context_menu_item.triggered.connect(self.on_open_folder_in_explorer)
+#        self.popMenu.addAction(self.selected_folder_context_menu_item)
+#        self.popMenu.addSeparator()
+
+#        #open_folder_action = QtGui.QAction("Open in explorer...",self)
+#        #open_folder_action.triggered.connect(self.on_open_folder_in_explorer)
+#        #self.popMenu.addAction(open_folder_action)
+        
+#        self.folderBrowseButton.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+#        self.folderBrowseButton.customContextMenuRequested.connect(self.on_folder_browse_button_context_menu)
+
+
+mainViewBase, mainViewForm = uic.loadUiType("UI_IV_Measurement_v3.ui")
 class MainView(mainViewBase, mainViewForm):
     config_filename = 'configuration.ini'
     config_file_section_name = "UI_Options"
@@ -405,6 +447,8 @@ class MainView(mainViewBase, mainViewForm):
 
     def __init__(self, parent = None):
         super(mainViewBase, self).__init__(parent)
+
+
         self.configuration = configparser.RawConfigParser()
         self.configuration.read(self.config_filename)
         self.working_directory = ""
@@ -466,7 +510,12 @@ class MainView(mainViewBase, mainViewForm):
 
     def setupUi(self):
         super(MainView, self).setupUi(self)
-        self.setupFolderBrowseButton()
+        #self.setupFolderBrowseButton()
+
+        self.default_save_widget = DefaultSaveWidget()
+        self.advanced_save_widget = AdvancedSaveWidget()
+        self.ui_save_data_layout.addWidget(self.default_save_widget)
+        self.ui_save_data_layout.addWidget(self.advanced_save_widget)
 
 
         self.ivPlotWidget = IV_PlotWidget(self.ui_plot)
@@ -484,7 +533,7 @@ class MainView(mainViewBase, mainViewForm):
         self.statusbar.addPermanentWidget(self.progressBar)
 
 
-        self.__setup_ui_from_config()
+        #self.__setup_ui_from_config()
 
         #self.ui_ds_start.valueChanged.connect(self.__ui_range_changed)
         #self.ui_ds_stop.valueChanged.connect(self.__ui_range_changed)
