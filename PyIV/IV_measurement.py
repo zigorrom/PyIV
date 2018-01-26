@@ -380,7 +380,7 @@ def compose_wafer_chip_transistor_to_experiment_measurement_names(experiment, me
     exp_name = EXPERIMENT_NAME_FORMAT.format(w = wafer, c = chip, exp = experiment)
     meas_name = MEASUREMENT_NAME_FORMAT.format(trans = transistor, type = measurement_type)
     if measurement:
-        meas_name = "_".join[meas_name,measurement]
+        meas_name = "_".join([meas_name,measurement])
 
     return (exp_name,meas_name)
 
@@ -712,7 +712,7 @@ class MainView(mainViewBase, mainViewForm): #Ui_MainWindow):
 
 
     def __get_values_from_ui(self):
-        measurement_type = self.ui_measurement_type.currentText()
+        meas_type = self.ui_measurement_type.currentText()
 
         drain_keithley_resource = self.ui_ds_resource.currentText()
         gate_keithley_resource = self.ui_gs_resource.currentText()
@@ -722,8 +722,8 @@ class MainView(mainViewBase, mainViewForm): #Ui_MainWindow):
 
         hardware_sweep = self.ui_hardware_sweep.isChecked()
         integration_time = self.ui_integration_time.currentText()
-        current_compliance = self.ui_current_compliance.text() #.value()
-        set_measure_delay = self.ui_set_meas_delay.text() #.value()
+        current_compliance = float(self.ui_current_compliance.text()) #.value()
+        set_measure_delay = float(self.ui_set_meas_delay.text()) #.value()
         averaging_count = int(self.ui_averaging_count.currentText())
 
         experiment_name = self.ui_experimentName.text()
@@ -735,9 +735,9 @@ class MainView(mainViewBase, mainViewForm): #Ui_MainWindow):
             chip_name = self.ui_chip_name.text()
             transistor_number = self.ui_transistor_number.value()
             measurement_type = self.__get_ui_measurement_type()
-            if measurement_type == OUTPUT_MEASUREMENT:
+            if meas_type == OUTPUT_MEASUREMENT:
                 measurement_type = "IVds"
-            elif measurement_type == TRANSFER_MEASUREMENT:
+            elif meas_type == TRANSFER_MEASUREMENT:
                 measurement_type = "IVg"
             
             
@@ -747,7 +747,7 @@ class MainView(mainViewBase, mainViewForm): #Ui_MainWindow):
 
 
 
-        return (measurement_type,
+        return (meas_type,
                 drain_keithley_resource, 
                 gate_keithley_resource, 
                 #drain_range, 
