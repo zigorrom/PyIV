@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>724</width>
-    <height>843</height>
+    <width>975</width>
+    <height>864</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,18 +32,18 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_8">
+       <item row="0" column="0">
         <widget class="QLabel" name="label_7">
          <property name="text">
           <string>Characteristic Type</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0">
         <widget class="QComboBox" name="ui_measurement_type"/>
        </item>
-       <item>
+       <item row="2" column="0">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
           <string>Drain-Source Voltage</string>
@@ -95,7 +95,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="3" column="0">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
           <string>Gate-Source Voltage</string>
@@ -147,7 +147,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="4" column="0">
         <widget class="QGroupBox" name="groupBox_4">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -227,6 +227,9 @@
             </property>
            </widget>
           </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="ui_current_compliance"/>
+          </item>
           <item row="5" column="0">
            <widget class="QLabel" name="label_15">
             <property name="text">
@@ -234,28 +237,8 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QDoubleSpinBox" name="ui_current_compliance">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="decimals">
-             <number>7</number>
-            </property>
-           </widget>
-          </item>
           <item row="5" column="1">
-           <widget class="QDoubleSpinBox" name="ui_set_meas_delay">
-            <property name="decimals">
-             <number>4</number>
-            </property>
-            <property name="maximum">
-             <double>9999.999900000000707</double>
-            </property>
-           </widget>
+           <widget class="QLineEdit" name="ui_set_meas_delay"/>
           </item>
           <item row="6" column="0">
            <widget class="QLabel" name="label_16">
@@ -277,7 +260,7 @@
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="5" column="0">
         <widget class="QGroupBox" name="groupBox_2">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -288,21 +271,134 @@
          <property name="title">
           <string>Save Data</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QCheckBox" name="checkBox">
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0" colspan="4">
+           <widget class="QCheckBox" name="ui_use_advanced_dialog">
             <property name="text">
              <string>Use transistor save dialog</string>
             </property>
            </widget>
           </item>
-          <item>
-           <layout class="QVBoxLayout" name="ui_save_data_layout"/>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Experiment</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="3">
+           <widget class="QLineEdit" name="ui_experimentName"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Measurement</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="ui_measurementName">
+            <property name="maxLength">
+             <number>32767</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>#</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QSpinBox" name="ui_measurementCount">
+            <property name="maximum">
+             <number>99999</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_14">
+            <property name="text">
+             <string>Folder</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" colspan="3">
+           <widget class="QPushButton" name="folderBrowseButton">
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="4">
+           <widget class="QWidget" name="ui_advanced_dialog_widget" native="true">
+            <layout class="QGridLayout" name="ui_advanced_dialog_layout">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetDefaultConstraint</enum>
+             </property>
+             <property name="leftMargin">
+              <number>1</number>
+             </property>
+             <property name="topMargin">
+              <number>9</number>
+             </property>
+             <property name="rightMargin">
+              <number>1</number>
+             </property>
+             <property name="bottomMargin">
+              <number>9</number>
+             </property>
+             <property name="horizontalSpacing">
+              <number>11</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>9</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_18">
+               <property name="text">
+                <string>Wafer name</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="ui_wafer_name"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_19">
+               <property name="text">
+                <string>Chip name</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="ui_chip_name"/>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_20">
+               <property name="text">
+                <string>Transistor</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QSpinBox" name="ui_transistor_number">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>32</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item>
+       <item row="6" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -315,7 +411,7 @@
          </property>
         </spacer>
        </item>
-       <item>
+       <item row="7" column="0">
         <widget class="QFrame" name="frame_2">
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -351,7 +447,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>724</width>
+     <width>975</width>
      <height>21</height>
     </rect>
    </property>

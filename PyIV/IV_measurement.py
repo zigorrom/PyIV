@@ -5,7 +5,9 @@ import datetime
 import configparser
 import numpy as np
 import pandas as pd
+import pint
 
+from pint import UnitRegistry
 from PyQt4 import uic, QtGui, QtCore
 from PyQt4.QtCore import QThread
 
@@ -367,28 +369,39 @@ class QVoltageValidator(QtGui.QRegExpValidator):
         regex = QtCore.QRegExp("^-?(?:0|[1-9]\d*).?(\d*)\s*(?:[yzafpnumcdhkMGTPEZY])?[V]")   #"(\d+).?(\d*)\s*(m|cm|km)")
         self.setRegExp(regex)   
 
-class SaveDataObject:
-    def __init__(self):
-        pass
+def extract_from_experiment_measurement_names(experiment_name, measurement_name):
+    pass
 
-defaultSaveBase, defaultSaveForm = uic.loadUiType("UI_default_save.ui")
-class DefaultSaveWidget(defaultSaveBase, defaultSaveForm):
-    def __init__(self, parent = None):
-        super(defaultSaveBase, self).__init__(parent)
-        self.setupUi()
-
-    def setupUi(self):
-        super(DefaultSaveWidget, self).setupUi(self)
+EXPERIMENT_NAME_FORMAT = "{w}_{c}_{exp}"
+MEASUREMENT_NAME_FORMAT = "t{trans}-{type}"
 
 
-advancedSaveBase, advancedSaveForm = uic.loadUiType("UI_advanced_save.ui")
-class AdvancedSaveWidget(advancedSaveBase, advancedSaveForm):
-    def __init__(self, parent = None):
-        super(advancedSaveBase, self).__init__(parent)
-        self.setupUi()
+def compose_wafer_chip_transistor_to_experiment_measurement_names(experiment, measurement, wafer,chip,transistor,measurement_type):
+    exp_name = EXPERIMENT_NAME_FORMAT.format(w = wafer, c = chip, exp = experiment)
+    meas_name = MEASUREMENT_NAME_FORMAT.format(trans = transistor, type = measurement_type)
+    if measurement:
+        meas_name = "_".join[meas_name,measurement]
 
-    def setupUi(self):
-        super(AdvancedSaveWidget, self).setupUi(self)
+    return (exp_name,meas_name)
+
+def convert_value_to_volts(ureg, value):
+    assert isinstance(ureg, UnitRegistry)
+    try:
+          v = ureg(value)
+          if not isinstance(v,pint.quantity._Quantity):
+              v = float(v) * ureg.volt
+          print("{0} {1}".format(v.magnitude, v.units))
+          v.ito(ureg.volt)
+          return v.magnitude
+    except Exception as e:
+          print("error while handling value")
+          print(str(e))
+          return 0.0
+
+def string_to_volt_converter(ureg):
+    def wrapper(value):
+       return convert_value_to_volts(ureg, value)
+    return wrapper
 
 #def setupFolderBrowseButton(parent, ):
 #        self.popMenu = QtGui.QMenu(parent)
@@ -404,9 +417,12 @@ class AdvancedSaveWidget(advancedSaveBase, advancedSaveForm):
 #        self.folderBrowseButton.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 #        self.folderBrowseButton.customContextMenuRequested.connect(self.on_folder_browse_button_context_menu)
 
+#from ui_iv_measurement import Ui_MainWindow
 
 mainViewBase, mainViewForm = uic.loadUiType("UI_IV_Measurement_v3.ui")
-class MainView(mainViewBase, mainViewForm):
+class MainView(mainViewBase, mainViewForm): #Ui_MainWindow): 
+    ureg = UnitRegistry()
+    #str_to_volt_converter = string_to_volt_converter(ureg)
     config_filename = 'configuration.ini'
     config_file_section_name = "UI_Options"
     (measurement_type_option,
@@ -447,7 +463,7 @@ class MainView(mainViewBase, mainViewForm):
 
     def __init__(self, parent = None):
         super(mainViewBase, self).__init__(parent)
-
+        #super().__init__()
 
         self.configuration = configparser.RawConfigParser()
         self.configuration.read(self.config_filename)
@@ -508,14 +524,28 @@ class MainView(mainViewBase, mainViewForm):
     def on_folder_browse_button_context_menu(self,point):
         self.popMenu.exec_(self.folderBrowseButton.mapToGlobal(point))
 
+    def setVisibleToAdvancedSaveDialog(self,state):
+        if state == QtCore.Qt.Unchecked:
+            self.ui_advanced_dialog_widget.hide()
+        else:
+            self.ui_advanced_dialog_widget.show()
+
+    
+
     def setupUi(self):
         super(MainView, self).setupUi(self)
-        #self.setupFolderBrowseButton()
+        self.ui_ds_start.setValidator(QVoltageValidator())
+        self.ui_ds_stop.setValidator(QVoltageValidator())
+        self.ui_gs_start.setValidator(QVoltageValidator())
+        self.ui_gs_stop.setValidator(QVoltageValidator())
+        self.ui_current_compliance.setValidator(QtGui.QDoubleValidator())
+        self.ui_set_meas_delay.setValidator(QtGui.QDoubleValidator())
+        self.setupFolderBrowseButton()
 
-        self.default_save_widget = DefaultSaveWidget()
-        self.advanced_save_widget = AdvancedSaveWidget()
-        self.ui_save_data_layout.addWidget(self.default_save_widget)
-        self.ui_save_data_layout.addWidget(self.advanced_save_widget)
+        self.ui_use_advanced_dialog.stateChanged.connect(self.setVisibleToAdvancedSaveDialog)
+        self.setVisibleToAdvancedSaveDialog(self.ui_use_advanced_dialog.checkState())
+
+
 
 
         self.ivPlotWidget = IV_PlotWidget(self.ui_plot)
@@ -533,7 +563,7 @@ class MainView(mainViewBase, mainViewForm):
         self.statusbar.addPermanentWidget(self.progressBar)
 
 
-        #self.__setup_ui_from_config()
+        self.__setup_ui_from_config()
 
         #self.ui_ds_start.valueChanged.connect(self.__ui_range_changed)
         #self.ui_ds_stop.valueChanged.connect(self.__ui_range_changed)
@@ -582,21 +612,30 @@ class MainView(mainViewBase, mainViewForm):
         main_section = MainView.config_file_section_name
         measurement_type = self.__get_ui_measurement_type() #config[main_section][self.measurement_type_option]
         if config.has_section(measurement_type):
-            ds_start = float(config[measurement_type][self.drain_start_option])
-            self.ui_ds_start.setValue(ds_start)
+            #ds_start = float(config[measurement_type][self.drain_start_option])
+            #self.ui_ds_start.setValue(ds_start)
+            ds_start = config[measurement_type][self.drain_start_option]
+            self.ui_ds_start.setText(ds_start)
 
-            ds_stop = float(config[measurement_type][self.drain_stop_option])
-            self.ui_ds_stop.setValue(ds_stop)
+            #ds_stop = float(config[measurement_type][self.drain_stop_option])
+            #self.ui_ds_stop.setValue(ds_stop)
+            ds_stop = config[measurement_type][self.drain_stop_option]
+            self.ui_ds_stop.setText(ds_stop)
 
             ds_points = int(config[measurement_type][self.drain_points_option])
             self.ui_ds_points.setValue(ds_points)
 
-            gs_start = float(config[measurement_type][self.gate_start_option])
-            self.ui_gs_start.setValue(gs_start)
 
-            gs_stop = float(config[measurement_type][self.gate_stop_option])
-            self.ui_gs_stop.setValue(gs_stop)
+            #gs_start = float(config[measurement_type][self.gate_start_option])
+            #self.ui_gs_start.setValue(gs_start)
+            gs_start = config[measurement_type][self.gate_start_option]
+            self.ui_gs_start.setText(gs_start)
 
+            #gs_stop = float(config[measurement_type][self.gate_stop_option])
+            #self.ui_gs_stop.setValue(gs_stop)
+            gs_stop = config[measurement_type][self.gate_stop_option]
+            self.ui_gs_stop.setText(gs_stop)
+            
             gs_points = int(config[measurement_type][self.gate_points_option])
             self.ui_gs_points.setValue(gs_points)
 
@@ -624,11 +663,16 @@ class MainView(mainViewBase, mainViewForm):
         integration_time = config[main_section][self.integration_time_option]
         self.__set_combobox_index_corresponding_to_text(self.ui_integration_time, integration_time)
 
-        current_compliance = float(config[main_section][self.current_compliance_option])
-        self.ui_current_compliance.setValue(current_compliance)
+        #current_compliance = float(config[main_section][self.current_compliance_option])
+        #self.ui_current_compliance.setValue(current_compliance)
+        current_compliance = config[main_section][self.current_compliance_option]
+        self.ui_current_compliance.setText(current_compliance)
 
-        set_measure_delay= float(config[main_section][self.set_measure_delay_option])
-        self.ui_set_meas_delay.setValue(set_measure_delay)
+
+        #set_measure_delay= float(config[main_section][self.set_measure_delay_option])
+        #self.ui_set_meas_delay.setValue(set_measure_delay)
+        set_measure_delay= config[main_section][self.set_measure_delay_option]
+        self.ui_set_meas_delay.setText(set_measure_delay)
 
         experiment_name = config[main_section][self.experiment_name_option]
         self.ui_experimentName.setText(experiment_name)
@@ -655,9 +699,17 @@ class MainView(mainViewBase, mainViewForm):
         return self.ui_measurement_type.currentText()
 
     def __get_range_values_from_ui(self):
-        drain_range = float_range(self.ui_ds_start.value(), self.ui_ds_stop.value(), len = self.ui_ds_points.value())
-        gate_range =  float_range(self.ui_gs_start.value(), self.ui_gs_stop.value(), len = self.ui_gs_points.value())
+        ds_start = convert_value_to_volts(self.ureg, self.ui_ds_start.text()) #float(self.ui_ds_start.text())
+        ds_stop = convert_value_to_volts(self.ureg, self.ui_ds_stop.text()) #float(self.ui_ds_stop.text())
+        gs_start = convert_value_to_volts(self.ureg, self.ui_gs_start.text())#float(self.ui_gs_start.text())
+        gs_stop = convert_value_to_volts(self.ureg, self.ui_gs_stop.text())#float(self.ui_gs_stop.text())
+        drain_range = float_range(ds_start, ds_stop, len = self.ui_ds_points.value())
+        gate_range =  float_range(gs_start, gs_stop, len = self.ui_gs_points.value())
+        #drain_range = float_range(self.ui_ds_start.value(), self.ui_ds_stop.value(), len = self.ui_ds_points.value())
+        #gate_range =  float_range(self.ui_gs_start.value(), self.ui_gs_stop.value(), len = self.ui_gs_points.value())
         return (drain_range, gate_range)
+
+
 
     def __get_values_from_ui(self):
         measurement_type = self.ui_measurement_type.currentText()
@@ -670,13 +722,28 @@ class MainView(mainViewBase, mainViewForm):
 
         hardware_sweep = self.ui_hardware_sweep.isChecked()
         integration_time = self.ui_integration_time.currentText()
-        current_compliance = self.ui_current_compliance.value()
-        set_measure_delay = self.ui_set_meas_delay.value()
+        current_compliance = self.ui_current_compliance.text() #.value()
+        set_measure_delay = self.ui_set_meas_delay.text() #.value()
         averaging_count = int(self.ui_averaging_count.currentText())
 
         experiment_name = self.ui_experimentName.text()
         measurement_name = self.ui_measurementName.text()
         measurement_count = self.ui_measurementCount.value()
+
+        if self.ui_use_advanced_dialog.checkState() != QtCore.Qt.Unchecked:
+            wafer_name = self.ui_wafer_name.text()
+            chip_name = self.ui_chip_name.text()
+            transistor_number = self.ui_transistor_number.value()
+            measurement_type = self.__get_ui_measurement_type()
+            if measurement_type == OUTPUT_MEASUREMENT:
+                measurement_type = "IVds"
+            elif measurement_type == TRANSFER_MEASUREMENT:
+                measurement_type = "IVg"
+            
+            
+            (experiment_name, measurement_name) = compose_wafer_chip_transistor_to_experiment_measurement_names(experiment_name, measurement_name, wafer_name,chip_name, transistor_number, measurement_type)
+            
+                
 
 
 
