@@ -27,7 +27,7 @@ class IV_PlotWidget:
         self.plot.setLogMode(x=False, y=False)
         self.plot.setLabel("left", "DrainCurrent", units="A")
         #self.plot.setLabel("bottom", "Frequency", units="Hz")
-        self.plot.setLimits(xMin=-50,xMax = 50, yMin = -1, yMax = 1)
+        self.plot.setLimits(xMin=-200,xMax = 200, yMin = -1, yMax = 1)
         #self.plot.setXRange(0.1,5)
         #self.plot.setYRange(-20,-1)
 

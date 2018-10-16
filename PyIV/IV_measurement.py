@@ -254,8 +254,8 @@ class IV_Experiment(QThread):
             self.measurementStarted.emit()#dependent_range.length)
             
             #update autozero values
-            independent_device.ForceAutoZeroUpdate()
-            dependent_device.ForceAutoZeroUpdate()
+            #independent_device.ForceAutoZeroUpdate()
+            #dependent_device.ForceAutoZeroUpdate()
 
             self.__activate_minimal_sensing_range(independent_device)
             self.__activate_minimal_sensing_range(dependent_device)
