@@ -480,8 +480,11 @@ class MainView(mainViewBase, mainViewForm): #Ui_MainWindow):
     def on_folderBrowseButton_clicked(self):
         print("Select folder")
         
+        folder_name = QtGui.QFileDialog.getExistingDirectory(self,caption="Select Folder", directory = self.working_directory)
+        if not folder_name:
+            return False
 
-        folder_name = os.path.abspath(QtGui.QFileDialog.getExistingDirectory(self,caption="Select Folder", directory = self.working_directory))
+        folder_name = os.path.abspath(folder_name)
         
         msg = QtGui.QMessageBox()
         msg.setIcon(QtGui.QMessageBox.Information)
@@ -489,7 +492,7 @@ class MainView(mainViewBase, mainViewForm): #Ui_MainWindow):
         msg.setInformativeText("This is additional information")
         msg.setWindowTitle("MessageBox demo")
         msg.setDetailedText(folder_name)
-        msg.setStandardButtons(QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
+        msg.setStandardButtons(QtGui.QMessageBox.Ok)# | QtGui.QMessageBox.Cancel)
         retval = msg.exec_()
         if retval:
             self.working_directory = folder_name
