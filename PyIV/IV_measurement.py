@@ -419,7 +419,7 @@ def string_to_volt_converter(ureg):
 
 #from ui_iv_measurement import Ui_MainWindow
 
-mainViewBase, mainViewForm = uic.loadUiType("UI_IV_Measurement_v3.ui")
+mainViewBase, mainViewForm = uic.loadUiType("UI/UI_IV_Measurement_v3.ui")
 class MainView(mainViewBase, mainViewForm): #Ui_MainWindow): 
     ureg = UnitRegistry()
     #str_to_volt_converter = string_to_volt_converter(ureg)
