@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>975</width>
-    <height>1008</height>
+    <height>1095</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,12 +33,27 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
           <string>Voltage configuration</string>
          </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
@@ -62,6 +77,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QRadioButton" name="ui_custom_radiobutton">
+              <property name="text">
+               <string>Custom</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item>
@@ -77,7 +99,13 @@
              <property name="leftMargin">
               <number>0</number>
              </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
              <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
               <number>0</number>
              </property>
              <item>
@@ -91,6 +119,13 @@
               <widget class="QPushButton" name="ui_gate_source_voltage_range">
                <property name="text">
                 <string>Gate-Source Voltage</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="ui_backgate_voltage_range">
+               <property name="text">
+                <string>Back-Gate Voltage</string>
                </property>
               </widget>
              </item>
@@ -111,6 +146,72 @@
                 </widget>
                </item>
               </layout>
+             </item>
+             <item>
+              <widget class="QWidget" name="ui_customization_widget" native="true">
+               <layout class="QGridLayout" name="gridLayout_2">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="ui_remove_smu">
+                  <property name="text">
+                   <string>Remove</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="ui_reset_smu_list">
+                  <property name="text">
+                   <string>Reset</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0" colspan="2">
+                 <widget class="QListWidget" name="ui_customization_list">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>70</height>
+                   </size>
+                  </property>
+                  <property name="dragDropMode">
+                   <enum>QAbstractItemView::InternalMove</enum>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>Drain-Source Voltage</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Gate-Source Voltage</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Back-Gate Voltage</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -147,6 +248,16 @@
                </property>
               </widget>
              </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_22">
+               <property name="text">
+                <string>Back-Gate Voltage</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="ui_back_gate_voltage"/>
+             </item>
              <item row="1" column="1">
               <widget class="QLineEdit" name="ui_gate_source_voltage"/>
              </item>
@@ -154,13 +265,6 @@
            </widget>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="Line" name="line_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
         </widget>
        </item>
        <item>
@@ -174,7 +278,94 @@
          <property name="title">
           <string>Properties</string>
          </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
          <layout class="QGridLayout" name="gridLayout">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>Averaging count</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Set-Measure delay</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="ui_ds_label">
+            <property name="text">
+             <string>DS Keithley</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Integration time</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QComboBox" name="ui_averaging_count">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="ui_current_compliance"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="ui_ds_resource">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLineEdit" name="ui_set_meas_delay"/>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Current compliance</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="ui_gs_label">
+            <property name="text">
+             <string>GS Keithley</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="ui_gs_resource">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0" colspan="2">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
@@ -191,7 +382,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="ui_refresh_resources">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -205,48 +396,7 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>DS Keithley</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="ui_ds_resource">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>GS Keithley</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="ui_gs_resource">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Integration time</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
+          <item row="4" column="1">
            <widget class="QComboBox" name="ui_integration_time">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -256,35 +406,15 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_11">
+          <item row="3" column="0">
+           <widget class="QLabel" name="ui_bg_label">
             <property name="text">
-             <string>Current compliance</string>
+             <string>BG Keithley</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="ui_current_compliance"/>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_15">
-            <property name="text">
-             <string>Set-Measure delay</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLineEdit" name="ui_set_meas_delay"/>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_16">
-            <property name="text">
-             <string>Averaging count</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QComboBox" name="ui_averaging_count">
+          <item row="3" column="1">
+           <widget class="QComboBox" name="ui_bg_resource">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -297,13 +427,6 @@
         </widget>
        </item>
        <item>
-        <widget class="Line" name="line_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QGroupBox" name="groupBox_2">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -313,6 +436,9 @@
          </property>
          <property name="title">
           <string>Save Data</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
           <item row="0" column="0" colspan="4">
@@ -368,7 +494,7 @@
            </widget>
           </item>
           <item row="4" column="1" colspan="3">
-           <widget class="QPushButton" name="folderBrowseButton">
+           <widget class="FolderBrowserButton" name="folderBrowseButton">
             <property name="text">
              <string>...</string>
             </property>
@@ -384,13 +510,13 @@
               <number>1</number>
              </property>
              <property name="topMargin">
-              <number>9</number>
+              <number>0</number>
              </property>
              <property name="rightMargin">
               <number>1</number>
              </property>
              <property name="bottomMargin">
-              <number>9</number>
+              <number>0</number>
              </property>
              <property name="horizontalSpacing">
               <number>11</number>
@@ -463,6 +589,12 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QPushButton" name="startButton">
             <property name="text">
@@ -503,7 +635,48 @@
    <extends>QGraphicsView</extends>
    <header>pyqtgraph</header>
   </customwidget>
+  <customwidget>
+   <class>FolderBrowserButton</class>
+   <extends>QPushButton</extends>
+   <header>ui_helper</header>
+  </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>ui_transfer_radiobutton</tabstop>
+  <tabstop>ui_output_radiobutton</tabstop>
+  <tabstop>ui_timetrace_radiobutton</tabstop>
+  <tabstop>ui_custom_radiobutton</tabstop>
+  <tabstop>ui_drain_source_voltage_range</tabstop>
+  <tabstop>ui_gate_source_voltage_range</tabstop>
+  <tabstop>ui_backgate_voltage_range</tabstop>
+  <tabstop>ui_hw_sweep_radiobutton</tabstop>
+  <tabstop>ui_sw_sweep_radiobutton</tabstop>
+  <tabstop>ui_customization_list</tabstop>
+  <tabstop>ui_remove_smu</tabstop>
+  <tabstop>ui_reset_smu_list</tabstop>
+  <tabstop>ui_drain_source_voltage</tabstop>
+  <tabstop>ui_gate_source_voltage</tabstop>
+  <tabstop>ui_back_gate_voltage</tabstop>
+  <tabstop>ui_refresh_resources</tabstop>
+  <tabstop>ui_ds_resource</tabstop>
+  <tabstop>ui_gs_resource</tabstop>
+  <tabstop>ui_bg_resource</tabstop>
+  <tabstop>ui_integration_time</tabstop>
+  <tabstop>ui_current_compliance</tabstop>
+  <tabstop>ui_set_meas_delay</tabstop>
+  <tabstop>ui_averaging_count</tabstop>
+  <tabstop>ui_use_advanced_dialog</tabstop>
+  <tabstop>ui_experimentName</tabstop>
+  <tabstop>ui_wafer_name</tabstop>
+  <tabstop>ui_chip_name</tabstop>
+  <tabstop>ui_transistor_number</tabstop>
+  <tabstop>ui_measurementName</tabstop>
+  <tabstop>folderBrowseButton</tabstop>
+  <tabstop>ui_measurementCount</tabstop>
+  <tabstop>startButton</tabstop>
+  <tabstop>stopButton</tabstop>
+  <tabstop>ui_plot</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

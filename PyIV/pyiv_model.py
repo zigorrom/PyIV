@@ -5,10 +5,17 @@ class CharacterizarionMode(Enum):
     Output = 0
     Transfer = 1
     Timetrace = 2
+    Custom = 3
 
 class SweepMode(Enum):
     Hardware = 0
     Software = 1
+
+class CustomizationEnum(Enum):
+    Vds = "Drain-Source Voltage"
+    Vgs = "Gate-Source Voltage"
+    Vbg = "Back-Gate Voltage"
+
 
 def assert_characterization_type(function):
     return uih.__assert_isinstance_wrapper(function, CharacterizarionMode)
@@ -24,11 +31,15 @@ class PyIV_model(uih.NotifyPropertyChanged):
         super().__init__()
         self._characterization_mode = None
         self._sweep_mode = None
+        self._custom_order = None
 
         self._drain_source_voltage = None
         self._gate_source_voltage = None
+        self._back_gate_voltage = None
         self._drain_source_voltage_range = None
         self._gate_source_voltage_range = None
+        self._back_gate_voltage_range = None
+        
 
         self._ds_smu = None
         self._gs_smu = None
@@ -51,6 +62,7 @@ class PyIV_model(uih.NotifyPropertyChanged):
         self._transfer_button_checked = None
         self._output_button_checked = None
         self._timetrace_button_checked = None
+        self._custom_button_checked = None
         self._hw_sweep_button_checked = None
         self._sw_sweep_button_checked = None
 
@@ -90,6 +102,19 @@ class PyIV_model(uih.NotifyPropertyChanged):
         self.onPropertyChanged("sweep_mode", self, value)
 
     @property
+    def custom_order(self):
+        return self._custom_order
+
+    @custom_order.setter
+    @uih.assert_list_or_tuple_argument
+    def custom_order(self, value):
+        if self._custom_order == value:
+            return 
+        
+        self._custom_order = value
+        self.onPropertyChanged("custom_order", self, value)
+
+    @property
     def drain_source_voltage(self):
         return self._drain_source_voltage
 
@@ -116,6 +141,19 @@ class PyIV_model(uih.NotifyPropertyChanged):
         self.onPropertyChanged("gate_source_voltage", self, value)
 
     @property
+    def back_gate_voltage(self):
+        return self._back_gate_voltage
+
+    @back_gate_voltage.setter
+    @uih.assert_int_or_float_argument
+    def back_gate_voltage(self, value):
+        if self._back_gate_voltage == value:
+            return 
+
+        self._back_gate_voltage = value
+        self.onPropertyChanged("back_gate_voltage", self, value)
+
+    @property
     def drain_source_voltage_range(self):
         return self._drain_source_voltage_range
     
@@ -138,6 +176,18 @@ class PyIV_model(uih.NotifyPropertyChanged):
 
         self._gate_source_voltage_range = value
         self.onPropertyChanged("gate_source_voltage_range", self, value)
+
+    @property
+    def back_gate_voltage_range(self):
+        return self._back_gate_voltage_range
+    
+    @back_gate_voltage_range.setter
+    def back_gate_voltage_range(self,value):
+        if self._back_gate_voltage_range == value:
+            return 
+
+        self._back_gate_voltage_range = value
+        self.onPropertyChanged("back_gate_voltage_range", self, value)
 
     @property
     def drain_source_smu(self):
@@ -374,6 +424,19 @@ class PyIV_model(uih.NotifyPropertyChanged):
 
         self._timetrace_button_checked = value
         self.onPropertyChanged("timetrace_button_checked", self, value)
+
+    @property
+    def custom_button_checked(self):
+        return self._custom_button_checked
+
+    @custom_button_checked.setter
+    @uih.assert_boolean_argument
+    def custom_button_checked(self, value):
+        if self._custom_button_checked == value:
+            return 
+
+        self._custom_button_checked = value
+        self.onPropertyChanged("custom_button_checked", self, value)
 
     @property
     def hw_sweep_button_checked(self):

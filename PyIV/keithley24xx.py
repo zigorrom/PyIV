@@ -102,7 +102,7 @@ class Keithley24XX(VisaInstrument):
     def SetListVoltageSourceMode(self):
         self.SetSourcingMode(self.VOLT_SOURCE_FUNCTION,self.lIST_SOURCING_MODE)
 
-    def SetLisrCurrentSourceMode(self):
+    def SetListCurrentSourceMode(self):
         self.SetSourcingMode(self.CURR_SOURCE_FUNCTION,self.lIST_SOURCING_MODE)
         
     def SetSweepVoltageSourceMode(self):
