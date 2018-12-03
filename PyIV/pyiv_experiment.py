@@ -1,11 +1,11 @@
 import sys
 import os
 import time
-
+import traceback
 from PyQt4 import QtCore
-from PyQt4.QtCore import QThread
+from PyQt4.QtCore import QRunnable
 from pyiv_model import PyIV_model, CharacterizarionMode, SweepMode, CustomizationEnum
-
+import pyfans.ranges.modern_range_editor as mredit
 from keithley24xx import Keithley24XX
 
 class StopExperimentException(Exception):
@@ -19,9 +19,19 @@ class SweepMeasurement():
         pass
 
     
+class ExperimentSignals(QtCore.QObject):
+    sigExperimentStarted = QtCore.pyqtSignal()
+    sigExperimentFinished = QtCore.pyqtSignal()
+    sigMeasurementStarted = QtCore.pyqtSignal()
+    sigMeasurementFinished = QtCore.pyqtSignal()
+    sigMeasurementProgressChanged = QtCore.pyqtSignal()
+    sigExperimentProgressChanged = QtCore.pyqtSignal()
+    sigMeasurementDataPointReady = QtCore.pyqtSignal()
+    sigMeasurementDataCurveReady = QtCore.pyqtSignal()
 
 
-class PyIVexperiment(QThread):
+
+class PyIVexperiment(QRunnable):
     sigExperimentStarted = QtCore.pyqtSignal()
     sigExperimentFinished = QtCore.pyqtSignal()
     sigMeasurementStarted = QtCore.pyqtSignal()
@@ -39,10 +49,11 @@ class PyIVexperiment(QThread):
         super().__init__()
         self.setings = None
         self._stop_request = False
+        self.signals = ExperimentSignals()
 
 
     def initialize_settings(self, settings):
-        if isinstance(settings, PyIV_model):
+        if not isinstance(settings, PyIV_model):
             raise TypeError("Settings object has wrong type!")
         
         self.settings = settings
@@ -51,11 +62,16 @@ class PyIVexperiment(QThread):
         if self._stop_request:
             raise StopExperimentException()
 
+    def __del__(self):
+        print("Deleting object")
+
+    @QtCore.pyqtSlot()
     def run(self):
         self.perform_experiment()
 
     def stop(self):
         self._stop_request = True
+        # self.wait()
 
     def init_hardware(self):
         pass
@@ -91,19 +107,58 @@ class PyIVexperiment(QThread):
     def __increment_file_count(self):
        pass
 
+    def test(self):
+        prev_time = time.time()
+        while True:
+            self.assert_is_running()
+            current_time = time.time()
+            time_diff = current_time - prev_time
+            if time_diff > 1:
+                print(current_time)
+                prev_time = current_time
+
     def perform_two_terminal_software_sweep(self, independent_device, independent_range, dependent_device, dependent_range, independent_variable_name, dependent_variable_name):
-        pass
+        # self.test()
+        print("running software sweep")
+        for i, dependent_voltage in enumerate(dependent_range):
+            self.assert_is_running()
+            print("{0} voltage = {1}".format(dependent_variable_name, dependent_voltage))
+            print("|\t{0}".format(independent_variable_name))
+            for j, independent_voltage in enumerate(independent_range):
+                self.assert_is_running()
+                print("|\t{0}".format(independent_voltage))
+                time.sleep(0.2)
+
 
     def perform_two_terminal_hardware_sweep(self, independent_device, independent_range, dependent_device, dependent_range, independent_variable_name, dependent_variable_name):
+        print("running hardware sweep")
+        for i, dependent_voltage in enumerate(dependent_range):
+            self.assert_is_running()
+            print("{0} voltage = {1}".format(dependent_variable_name, dependent_voltage))
+            print("|\t{0}".format(independent_variable_name))
+            for j, independent_voltage in enumerate(independent_range):
+                self.assert_is_running()
+                print("|\t{0}".format(independent_voltage))
+                time.sleep(0.2)
+
+    
+
+    def initialize_hardware_sweep(self, independent_device, dependent_device):
         pass
+    
+    def initialize_software_sweep(self, independent_device, dependent_device):
+        pass
+
 
     def perform_transfer_measurement(self):
         drain_smu = None
-        drain_range = None
+        drain_range = mredit.RangeHandlerFactory.createHandler(self.settings.drain_source_voltage_range)
         gate_smu = None
-        gate_range = None
+        gate_range = mredit.RangeHandlerFactory.createHandler(self.settings.gate_source_voltage_range)
         sweep_mode = self.settings.sweep_mode
+
         if sweep_mode is SweepMode.Hardware:
+            self.initialize_hardware_sweep(gate_smu, drain_smu)
             self.perform_two_terminal_hardware_sweep(
                 gate_smu,
                 gate_range,
@@ -114,6 +169,7 @@ class PyIVexperiment(QThread):
             )
 
         elif sweep_mode is SweepMode.Software:
+            self.initialize_software_sweep(gate_smu, drain_smu)
             self.perform_two_terminal_software_sweep(
                 gate_smu,
                 gate_range,
@@ -129,11 +185,13 @@ class PyIVexperiment(QThread):
 
     def perform_output_measurement(self):
         drain_smu = None
-        drain_range = None
+        drain_range = mredit.RangeHandlerFactory.createHandler(self.settings.drain_source_voltage_range)
         gate_smu = None
-        gate_range = None
+        gate_range = mredit.RangeHandlerFactory.createHandler(self.settings.gate_source_voltage_range)
         sweep_mode = self.settings.sweep_mode
+
         if sweep_mode is SweepMode.Hardware:
+            self.initialize_hardware_sweep(drain_smu, gate_smu)
             self.perform_two_terminal_hardware_sweep(
                 drain_smu,
                 drain_range,
@@ -144,6 +202,7 @@ class PyIVexperiment(QThread):
             )
 
         elif sweep_mode is SweepMode.Software:
+            self.initialize_software_sweep(drain_smu, gate_smu)
             self.perform_two_terminal_software_sweep(
                 drain_smu,
                 drain_range,
@@ -158,27 +217,46 @@ class PyIVexperiment(QThread):
 
     def perform_custom_measurement(self):
         order_list = self.settings.custom_order
-        
+        self.test()
 
     def perform_timetrace_measurement(self):
-        raise NotImplementedError()
+        self.test()
 
     def perform_experiment(self):
-        characterization_mode = self.settings.characterization_mode
-        if characterization_mode is CharacterizarionMode.Transfer:
-            self.perform_transfer_measurement()
+        try:
+            self.signals.sigExperimentStarted.emit()
 
-        elif characterization_mode is CharacterizarionMode.Output:
-            self.perform_output_measurement()
+            characterization_mode = self.settings.characterization_mode
+            if characterization_mode is CharacterizarionMode.Transfer:
+                self.perform_transfer_measurement()
 
-        elif characterization_mode is CharacterizarionMode.Timetrace:
-            self.perform_timetrace_measurement()
+            elif characterization_mode is CharacterizarionMode.Output:
+                self.perform_output_measurement()
 
-        elif characterization_mode is CharacterizarionMode.Custom:
-            self.perform_custom_measurement()
+            elif characterization_mode is CharacterizarionMode.Timetrace:
+                self.perform_timetrace_measurement()
 
-        else:
-            raise ValueError("No such characterization mode")
+            elif characterization_mode is CharacterizarionMode.Custom:
+                self.perform_custom_measurement()
+
+            else:
+                raise ValueError("No such characterization mode")
+
+        except StopExperimentException:
+            print("experiment stop requested")
+
+        except Exception as e:
+            traceback.print_exc()
+
+        finally:
+            print("Finilizing experiment")
+            self.signals.sigExperimentFinished.emit()
+
+
+
+
+        
+
 
 
 

@@ -9,6 +9,7 @@ import pyfans.utils.ui_helper as uih
 import pyfans.utils.utils as util
 from communication_layer import get_available_gpib_resources, get_available_com_resources
 from pyiv_model import CharacterizarionMode, PyIV_model, SweepMode, CustomizationEnum
+from pyiv_experiment import PyIVexperiment
 from iv_plot import IV_PlotWidget
 
 mainViewBase, mainViewForm = uic.loadUiType("UI/UI_IV_Measurement_v4.ui")
@@ -23,6 +24,8 @@ class PyIVmainView(mainViewBase, mainViewForm, uih.DataContextWidget):
         self.setupUi()
         self.setupBindings()
         self.dataContext = self.settings
+        self.experimentThreadPool = QtCore.QThreadPool()
+        self.experimentThreadPool.setMaxThreadCount(1)
         
         
 
@@ -36,7 +39,7 @@ class PyIVmainView(mainViewBase, mainViewForm, uih.DataContextWidget):
         self.set_exdended_save_dialog(self.settings.use_extended_save_dialog)
         self.setupCustomizationList()
         self.setupHardwareResources()
-        
+        self.setControlButtonsState(False)
         # self.ui_customization_list
         # self.set_mode(self.settings.characterization_mode)
         # self.on_ui_use_advanced_dialog_toggled(False)
@@ -367,12 +370,56 @@ class PyIVmainView(mainViewBase, mainViewForm, uih.DataContextWidget):
             raise TypeError("the model object has wrong type")
     
         self._settings = value
-        
+
+    @QtCore.pyqtSlot()
+    def on_startButton_clicked(self):
+        self.start_experiment()     
+
+    @QtCore.pyqtSlot()
+    def on_stopButton_clicked(self):
+        self.stop_experiment()        
+
+    def start_experiment(self):
+        if hasattr(self, "experiment"):
+            print("already running!") 
+            return
+
+        self.experiment = PyIVexperiment()
+        self.experiment.initialize_settings(self.settings)
+        self.experiment.signals.sigExperimentStarted.connect(self.on_experiment_started)
+        self.experiment.signals.sigExperimentFinished.connect(self.on_experiment_finished)
+        # self.experiment.start()
+        self.experimentThreadPool.start(self.experiment)
+
+
+    def stop_experiment(self):
+        if hasattr(self, "experiment"):
+            self.experiment.stop()
+            delattr(self, "experiment")
     
     def closeEvent(self, event):
         # self.updateSourceData()
+        self.stop_experiment()
         self.save_settings()
+        self.experimentThreadPool.waitForDone()
 
+    def setControlButtonsState(self, running):
+        self.startButton.setEnabled(not running)
+        self.stopButton.setEnabled(running)
+
+
+    def on_experiment_started(self):
+        self.show_message("Experiment started", 3000)
+        print("Experiment started")
+        self.setControlButtonsState(True)
+
+    def on_experiment_finished(self):
+        self.show_message("Experiment finished", 3000)
+        print("Experiment finished")
+        self.experimentThreadPool.waitForDone()
+        if hasattr(self, "experiment"):
+            delattr(self, "experiment")
+        self.setControlButtonsState(False)
 
 
 

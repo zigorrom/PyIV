@@ -39,7 +39,8 @@ class PyIV_model(uih.NotifyPropertyChanged):
         self._drain_source_voltage_range = None
         self._gate_source_voltage_range = None
         self._back_gate_voltage_range = None
-        
+        self._voltage_ranges = dict()
+
 
         self._ds_smu = None
         self._gs_smu = None
@@ -74,6 +75,24 @@ class PyIV_model(uih.NotifyPropertyChanged):
         self.__dict__ = state
         super().__init__()
         
+    def get_range(self, variable, characterization_mode):
+        if isinstance(self._voltage_ranges, dict):
+            var_dict = self._voltage_ranges.get(variable)
+            if isinstance(var_dict, dict):
+                return var_dict.get(characterization_mode)
+
+        return None
+        
+    def set_range(self, variable, characterizarion_mode, measurement_range):
+        if not isinstance(self._voltage_ranges, dict):
+            self._voltage_ranges = dict()
+
+        if not isinstance(characterizarion_mode, CharacterizarionMode):
+            return
+
+        rng = self._voltage_ranges.setdefault(variable, dict())
+        rng[characterizarion_mode] = measurement_range
+
     
     @property
     def characterization_mode(self):
@@ -130,6 +149,7 @@ class PyIV_model(uih.NotifyPropertyChanged):
     @property
     def gate_source_voltage(self):
         return self._gate_source_voltage
+        # return self._voltage_ranges.get("gate-source-range")
 
     @gate_source_voltage.setter
     @uih.assert_int_or_float_argument
@@ -138,6 +158,7 @@ class PyIV_model(uih.NotifyPropertyChanged):
             return 
 
         self._gate_source_voltage = value
+
         self.onPropertyChanged("gate_source_voltage", self, value)
 
     @property
@@ -155,38 +176,59 @@ class PyIV_model(uih.NotifyPropertyChanged):
 
     @property
     def drain_source_voltage_range(self):
-        return self._drain_source_voltage_range
+        # return self._drain_source_voltage_range
+        rng = self.get_range("drain_source_range", self.characterization_mode)
+        return rng
     
     @drain_source_voltage_range.setter
     def drain_source_voltage_range(self,value):
-        if self._drain_source_voltage_range == value:
+        # if self._drain_source_voltage_range == value:
+        #     return 
+
+        # self._drain_source_voltage_range = value
+        rng = self.get_range("drain_source_range", self.characterization_mode)
+        if rng == value:
             return 
 
-        self._drain_source_voltage_range = value
+        self.set_range("drain_source_range", self.characterization_mode, value)
         self.onPropertyChanged("drain_source_voltage_range", self, value)
 
     @property
     def gate_source_voltage_range(self):
-        return self._gate_source_voltage_range
+        # return self._gate_source_voltage_range
+        rng = self.get_range("gate_source_range", self.characterization_mode)
+        return rng
     
     @gate_source_voltage_range.setter
     def gate_source_voltage_range(self,value):
-        if self._gate_source_voltage_range == value:
+        # if self._gate_source_voltage_range == value:
+        #     return 
+
+        # self._gate_source_voltage_range = value
+        rng = self.get_range("gate_source_range", self.characterization_mode)
+        if rng == value:
             return 
 
-        self._gate_source_voltage_range = value
+        self.set_range("gate_source_range", self.characterization_mode, value)
         self.onPropertyChanged("gate_source_voltage_range", self, value)
 
     @property
     def back_gate_voltage_range(self):
-        return self._back_gate_voltage_range
+        # return self._back_gate_voltage_range
+        rng = self.get_range("back_gate_range", self.characterization_mode)
+        return rng
     
     @back_gate_voltage_range.setter
     def back_gate_voltage_range(self,value):
-        if self._back_gate_voltage_range == value:
+        # if self._back_gate_voltage_range == value:
+        #     return 
+
+        # self._back_gate_voltage_range = value
+        rng = self.get_range("back_gate_range", self.characterization_mode)
+        if rng == value:
             return 
 
-        self._back_gate_voltage_range = value
+        self.set_range("back_gate_range", self.characterization_mode, value)
         self.onPropertyChanged("back_gate_voltage_range", self, value)
 
     @property
