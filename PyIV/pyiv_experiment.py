@@ -127,7 +127,7 @@ class PyIVexperiment(QRunnable):
             for j, independent_voltage in enumerate(independent_range):
                 self.assert_is_running()
                 print("|\t{0}".format(independent_voltage))
-                time.sleep(0.2)
+                time.sleep(0.01)
 
 
     def perform_two_terminal_hardware_sweep(self, independent_device, independent_range, dependent_device, dependent_range, independent_variable_name, dependent_variable_name):
@@ -139,8 +139,7 @@ class PyIVexperiment(QRunnable):
             for j, independent_voltage in enumerate(independent_range):
                 self.assert_is_running()
                 print("|\t{0}".format(independent_voltage))
-                time.sleep(0.2)
-
+                time.sleep(0.01)
     
 
     def initialize_hardware_sweep(self, independent_device, dependent_device):
@@ -215,9 +214,41 @@ class PyIVexperiment(QRunnable):
         else:
             raise ValueError("wrong sweep mode")
 
+    
+
+
     def perform_custom_measurement(self):
         order_list = self.settings.custom_order
-        self.test()
+        print(order_list)
+        custom_list = list()
+        for item in order_list:
+            if item is CustomizationEnum.Vbg:
+                device = None #Keithley24XX(self.settings.back_gate_source_smu)
+                rng = self.settings.back_gate_voltage_range
+                name = "Back Gate"
+                val_tuple = (device, rng, name)
+                custom_list.append(val_tuple)
+            
+            elif item is CustomizationEnum.Vds:
+                device = None #Keithley24XX(self.settings.drain_source_smu)
+                rng = self.settings.drain_source_voltage_range
+                name = "Drain Source"
+                val_tuple = (device, rng, name)
+                custom_list.append(val_tuple)
+            
+            elif item is CustomizationEnum.Vgs:
+                device = None #Keithley24XX(self.settings.gate_source_smu)
+                rng = self.settings.gate_source_voltage_range
+                name = "Gate Source"
+                val_tuple = (device, rng, name)
+                custom_list.append(val_tuple)
+        
+        
+
+
+
+
+        # self.test()
 
     def perform_timetrace_measurement(self):
         self.test()
