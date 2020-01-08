@@ -420,7 +420,7 @@ def string_to_volt_converter(ureg):
 #from ui_iv_measurement import Ui_MainWindow
 
 #mainViewBase, mainViewForm = uic.loadUiType("UI_IV_Measurement_v3.ui")
-class MainView(Ui_MainWindow): #mainViewBase, mainViewForm): #Ui_MainWindow): 
+class MainView(QtGui.QMainWindow, Ui_MainWindow): #mainViewBase, mainViewForm): #Ui_MainWindow): 
     ureg = UnitRegistry()
     #str_to_volt_converter = string_to_volt_converter(ureg)
     config_filename = 'configuration.ini'
