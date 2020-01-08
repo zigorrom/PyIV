@@ -15,7 +15,7 @@ from communication_layer import get_available_gpib_resources, get_available_com_
 from keithley24xx import Keithley24XX
 from range_handlers import float_range
 from iv_plot import IV_PlotWidget
-
+from ui_iv_measurement import Ui_MainWindow
 
 
 INTEGRATION_SPEEDS = ["Slow", "Middle", "Fast"]
@@ -414,13 +414,13 @@ def string_to_volt_converter(ureg):
 #        #open_folder_action.triggered.connect(self.on_open_folder_in_explorer)
 #        #self.popMenu.addAction(open_folder_action)
         
-#        self.folderBrowseButton.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+#        self.folderBrowseButton.setContextMenuPolony(QtCore.Qt.CustomContextMenu)
 #        self.folderBrowseButton.customContextMenuRequested.connect(self.on_folder_browse_button_context_menu)
 
 #from ui_iv_measurement import Ui_MainWindow
 
-mainViewBase, mainViewForm = uic.loadUiType("UI_IV_Measurement_v3.ui")
-class MainView(mainViewBase, mainViewForm): #Ui_MainWindow): 
+#mainViewBase, mainViewForm = uic.loadUiType("UI_IV_Measurement_v3.ui")
+class MainView(Ui_MainWindow): #mainViewBase, mainViewForm): #Ui_MainWindow): 
     ureg = UnitRegistry()
     #str_to_volt_converter = string_to_volt_converter(ureg)
     config_filename = 'configuration.ini'
@@ -462,13 +462,13 @@ class MainView(mainViewBase, mainViewForm): #Ui_MainWindow):
                                              "averaging_count")
 
     def __init__(self, parent = None):
-        super(mainViewBase, self).__init__(parent)
-        #super().__init__()
-
+        # super(mainViewBase, self).__init__(parent)
+        super().__init__(parent)
+        self.setupUi()
         self.configuration = configparser.RawConfigParser()
         self.configuration.read(self.config_filename)
         self.working_directory = ""
-        self.setupUi()
+        
         self.experiment = None
         
 
@@ -536,7 +536,8 @@ class MainView(mainViewBase, mainViewForm): #Ui_MainWindow):
     
 
     def setupUi(self):
-        super(MainView, self).setupUi(self)
+        super().setupUi(self)
+        # super(MainView, self).setupUi(self)
         self.ui_ds_start.setValidator(QVoltageValidator())
         self.ui_ds_stop.setValidator(QVoltageValidator())
         self.ui_gs_start.setValidator(QVoltageValidator())
